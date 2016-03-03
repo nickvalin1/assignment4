@@ -61,7 +61,7 @@ window.onload = function() {
         makeEnemy(1216, 576);
         makeEnemy(1472, 576);
         
-        introText=game.add.text(100,100,"Invasion!\nYour home planet of Tralfamadore is being invaded by the viscious xenomorphs. They are currently contained to the caves below the capital city, but you must use your math skills to defeat them before they can reach the surface of Tralfamadore!\nPress the Spacebar to continue...",{fontSize: '28px', fill:'#ffffff', align: 'center', wordWrap: 'true', wordWrapWidth: 600});
+        introText=game.add.text(100,100,"Invasion!\nYour home planet of Tralfamadore is being invaded by the vicious xenomorphs. They are currently contained to the caves below the capital city, but you must use your math skills to defeat them before they can reach the surface of Tralfamadore!\nPress the Spacebar to continue...",{fontSize: '28px', fill:'#ffffff', align: 'center', wordWrap: 'true', wordWrapWidth: 600});
         introText.fixedToCamera=true;
         
         endingText=game.add.text(150,100,"Congratulations, your math skills have defeated the xenomorph invasion! Tralfamadore is safe, at least from a three-dimensional point of view...", {fontSize: '28px', fill:'#ffffff', align: 'center', wordWrap: 'true', wordWrapWidth: 600});
