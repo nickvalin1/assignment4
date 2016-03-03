@@ -8,21 +8,32 @@ window.onload = function() {
         game.load.spritesheet('dude', 'assets/dude.png', 32, 32);
         game.load.spritesheet('enemy', 'assets/alien.gif', 108, 105);
         game.load.audio('music', 'assets/starman.m4a');
+        game.load.audio('jump', 'assets/jump.wav');
+        game.load.audio('alien', 'assets/alien.wav');
     }
     
     var music;
+    var jump;
+    var alien;
     var enemies;
     var map;
     var layer;
     var player;
     var cursors;
+    var introText;
+    var endingText;
+    var numEnemies=8;
+    var space;
     
     function create() {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         
         music=game.add.audio('music');
-        music.addMarker('start', 19, 175);
+        music.addMarker('start', 19, 235);
         music.play('start');
+        
+        jump=game.add.audio('jump', volume=.25);
+        alien=game.add.audio('alien');
         
         map=game.add.tilemap('map');
         map.addTilesetImage('tiles');
@@ -50,7 +61,15 @@ window.onload = function() {
         makeEnemy(1216, 576);
         makeEnemy(1472, 576);
         
+        introText=game.add.text(100,100,"Invasion!\nYour home planet of Tralfamadore is being invaded by the viscious xenomorphs. They are currently contained to the caves below the capital city, but you must use your math skills to defeat them before they can reach the surface of Tralfamadore!\nPress the Spacebar to continue...",{fontSize: '28px', fill:'#ffffff', align: 'center', wordWrap: 'true', wordWrapWidth: 600});
+        introText.fixedToCamera=true;
+        
+        endingText=game.add.text(150,100,"Congratulations, your math skills have defeated the xenomorph invasion! Tralfamadore is safe, at least from a three-dimensional point of view...", {fontSize: '28px', fill:'#ffffff', align: 'center', wordWrap: 'true', wordWrapWidth: 600});
+        endingText.fixedToCamera=true;
+        endingText.visible=false;
+        
         cursors=game.input.keyboard.createCursorKeys();
+        space=game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         
         game.camera.follow(player);
     }
@@ -77,6 +96,7 @@ window.onload = function() {
     }
     
     function mathProblem(player,enemy) {
+        alien.play();
         var x=game.rnd.integerInRange(1,10);
         var y=game.rnd.integerInRange(1,10);
         var answer=x+y;
@@ -92,6 +112,7 @@ window.onload = function() {
         cursors.right.isDown=false;
         cursors.up.isDown=false;
         cursors.down.isDown=false;
+        numEnemies--;
     }
     
     function update() {
@@ -99,11 +120,15 @@ window.onload = function() {
         game.physics.arcade.collide(enemies, player, mathProblem, null, this, enemies);
         game.physics.arcade.collide(enemies, layer);
         player.body.velocity.x=0;
+        if (space.isDown) {
+            introText.visible=false;
+        }
         if (cursors.left.isDown) {
             player.body.velocity.x=-150;
             player.animations.play('left');
             if (player.body.blocked.right&&!player.body.onFloor()) {//wall jump
                 player.body.velocity.y=-150;
+                jump.play();
             }
         }
         else if (cursors.right.isDown) {
@@ -111,6 +136,7 @@ window.onload = function() {
             player.animations.play('right');
             if (player.body.blocked.left&&!player.body.onFloor()) {//wall jump
                 player.body.velocity.y=-150;
+                jump.play();
             }
         }
         else {
@@ -120,10 +146,14 @@ window.onload = function() {
         if (cursors.up.isDown && (player.body.onFloor()||player.body.touching.down)) {
             player.body.gravity.y=300;
             player.body.velocity.y=-300;
+            jump.play();
         }
         if (cursors.down.isDown &&(!player.body.onFloor()||player.body.touching.down)) {
             player.body.gravity.y=600;
         }
         enemies.forEachAlive(changeDirection,this);
+        if (numEnemies==0) {
+            endingText.visible=true;
+        }
     }
 }
